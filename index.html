@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+	body {
+	      margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            font-family: Arial, sans-serif;	
+	}
+	.chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin: 20px;
+        }
+        canvas {
+            margin: 10px;
+        }
+        #secondChart {
+            width: 400px;
+            height: 200px;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Line Chart</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <h1>Bar Chart</h1>
+    <canvas id="secondChart" width="400" height="200"></canvas>
+    <script>
+        fetch('http://localhost:8080/data')
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(entry => new Date(entry.date).toLocaleDateString());
+                const studyData = data.map(entry => entry.study);
+                const workoutData = data.map(entry => entry.workout);
+		const codeData = data.map(entry => entry.code);
+		const gameData = data.map(entry => entry.game);
+		const leiData = data.map(entry => entry.leisure);
+		const commitData = data.map(entry => entry.commits);
+		const jobsData = data.map(entry => entry.jobs);
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Study',
+                                data: studyData,
+                                borderColor: 'blue',
+                                fill: false,
+				tension: 0.1
+                            },
+                            {
+                                label: 'Workout',
+                                data: workoutData,
+                                borderColor: 'red',
+                                fill: false,
+				tension: 0.1
+                            },
+			    {
+				label:'Code',
+				data: codeData,
+				borderColor: 'purple',
+				fill: false,
+				borderDash: [10,5],
+				tension: 0.1
+			    },
+			    {
+				label:'game',
+				data: gameData,
+				borderColor: 'green',
+				fill: false,
+				tension: 0.1
+			    },
+			    {
+				label:'leisure',
+				data: leiData,
+				borderColor: 'cyan',
+				fill: false,
+				tension: 0.1
+			    },
+			    {
+				label:'commits',
+				data: commitData,
+				borderColor: 'orange',
+				fill: false,
+				borderDash:[10,5],
+				tension: 0.1
+			    }
+			]
+                    }
+                });
+		    // Bar Chart
+                const barCtx = document.getElementById('secondChart').getContext('2d');
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Jobs',
+                                data: jobsData,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            },
+				{
+                                label: 'Leisure',
+                                data: leiData,
+                                backgroundColor: 'rgba(152, 200, 132, 0.2)',
+                                borderColor: 'rgba(0, 0, 0, 0)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+            
+    </script>
+</body>
+</html>
